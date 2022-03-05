@@ -516,7 +516,6 @@ class QueenAnt(ScubaThrower):  # You should change this line
             pass
 
 
-
 class AntRemover(Ant):
     """Allows the player to remove ants from the board in the GUI."""
 
@@ -533,6 +532,8 @@ class Bee(Insect):
     damage = 1
     # OVERRIDE CLASS ATTRIBUTES HERE
     is_watersafe = True
+    direction = 1
+    scared = False
 
     def sting(self, ant):
         """Attack an ANT, reducing its armor by 1."""
@@ -560,6 +561,11 @@ class Bee(Insect):
         # Extra credit: Special handling for bee direction
         # BEGIN EC
         "*** YOUR CODE HERE ***"
+        if self.direction == -1:
+            if self.place.entrance.name == 'Hive':
+                destination = self.place
+            else:
+                destination = self.place.entrance
         # END EC
         if self.blocked():
             self.sting(self.place.ant)
@@ -585,6 +591,10 @@ def make_slow(action, bee):
     """
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
+    def slow_action(gamestate):
+        if gamestate.time % 2 == 0:
+            action(gamestate)
+    return slow_action
     # END Problem EC
 
 def make_scare(action, bee):
@@ -594,6 +604,11 @@ def make_scare(action, bee):
     """
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
+    def scare_action(gamestate):
+        bee.direction = -1
+        action(gamestate)
+        bee.direction = 1
+    return scare_action
     # END Problem EC
 
 def apply_status(status, bee, length):
@@ -601,6 +616,17 @@ def apply_status(status, bee, length):
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
     # END Problem EC
+    original_action = bee.action
+    status_action = status(bee.action, bee)
+
+    def new_action(gamestate):
+        nonlocal length
+        if length:
+            status_action(gamestate)
+        else:
+            original_action(gamestate)
+
+    bee.action = new_action
 
 
 class SlowThrower(ThrowerAnt):
@@ -609,7 +635,7 @@ class SlowThrower(ThrowerAnt):
     name = 'Slow'
     food_cost = 4
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem EC
 
     def throw_at(self, target):
@@ -623,12 +649,16 @@ class ScaryThrower(ThrowerAnt):
     name = 'Scary'
     food_cost = 6
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem EC
 
     def throw_at(self, target):
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
+        if target and target.scared == False:
+            apply_status(make_scare, target, 2)
+            target.scared = True
+
         # END Problem EC
 
 class LaserAnt(ThrowerAnt):
