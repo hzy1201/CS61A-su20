@@ -332,6 +332,7 @@ def memo(f):
         return cache[args]
     return memoized
 
+key_distance_diff = memo(key_distance_diff)
 key_distance_diff = count(key_distance_diff)
 
 
@@ -340,7 +341,24 @@ def faster_autocorrect(user_word, valid_words, diff_function, limit):
 
     # BEGIN PROBLEM EC2
     "*** YOUR CODE HERE ***"
+    dic = {}
+    if user_word in dic:
+       return dic[user_word]
 
+    elif user_word in valid_words:
+        dic[user_word] = user_word
+        return user_word
+
+    else:
+       flag, min_loss, value = False, 100000000, user_word
+       for valid_word in valid_words:
+           loss = diff_function(user_word, valid_word, limit)
+           if loss <= limit:
+               if loss < min_loss:
+                   min_loss = loss
+                   value = valid_word
+       dic[user_word] = value
+       return value
     # END PROBLEM EC2
 
 
