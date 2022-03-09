@@ -14,20 +14,21 @@
   )
 )
 
-
+'The solution below is not quite right. It can only handle the condition when s is finite.
+'You may refer to this: https://github.com/PKUFlyingPig/CS61A/blob/master/hws/hw08/hw08.scm
 (define (group-by-nondecreasing s)
     'YOUR-CODE-HERE
   (define (helper lst last s)
-    (if (null? s) (cons lst nil)
+    (if (null? s) (cons-stream lst nil)
       (if (< (car s) last)
-        (cons lst (helper (cons (car s) nil) (car s) (cdr s)))
-        (helper (append lst (cons (car s) nil)) (car s) (cdr s))
+        (cons-stream lst (helper (cons-stream (car s) nil) (car s) (cdr-stream s)))
+        (helper (append lst (cons-stream (car s) nil)) (car s) (cdr-stream s))
       )
     )
   )
 
   (if (null? s) nil
-    (helper (cons (car s) nil) (car s) (cdr s))
+    (helper (cons-stream (car s) nil) (car s) (cdr-stream s))
   )
 )
 
