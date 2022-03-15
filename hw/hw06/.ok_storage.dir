@@ -4,3 +4,4 @@
 'remove_all-correct', (1536, 70)
 'deep_map-correct', (2048, 70)
 'store_digits-correct', (2560, 70)
+'path_yielder-correct', (3072, 70)

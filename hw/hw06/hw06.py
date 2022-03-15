@@ -263,11 +263,14 @@ def path_yielder(t, value):
     """
 
     "*** YOUR CODE HERE ***"
+    if t.label == value:
+        yield [value]
 
-    for _______________ in _________________:
-        for _______________ in _________________:
 
+    for branch in t.branches:
+        for temp in path_yielder(branch, value):
             "*** YOUR CODE HERE ***"
+            yield [t.label] + temp
 
 
 def remove_all(link , value):
